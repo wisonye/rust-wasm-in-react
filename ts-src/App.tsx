@@ -22,8 +22,15 @@ const App = (props: AppProps) => {
         console.log(`App is running.....>:)`)
         const rust_wasm = import('wasm');
         rust_wasm
-            .then(w => w.test_log())
-            .catch(console.error)
+            .then(w => {
+                w.test_log()
+
+                // This wasm panic will be caught by `catch` block below
+                // w.test_panic()
+            })
+            .catch(error => {
+                console.log(`Error happaned: `, error)
+            })
     }, [])
 
     return (
