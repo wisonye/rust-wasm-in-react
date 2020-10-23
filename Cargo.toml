@@ -31,3 +31,6 @@ features = [
     "WebGlUniformLocation",
     "Window",
 ]
+
+[profile.release]
+lto = true

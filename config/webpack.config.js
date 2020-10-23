@@ -24,6 +24,7 @@ const getClientEnvironment = require('./env');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
+const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 
 const postcssNormalize = require('postcss-normalize');
 
@@ -323,7 +324,16 @@ module.exports = function(webpackEnv) {
       rules: [
         // Disable require.ensure as it's not a standard language feature.
         { parser: { requireEnsure: false } },
-
+        {
+          test: /\.wasm$/, // only load WASM files (ending in .wasm)
+          // only files in our src/ folder
+          include: path.resolve(__dirname, "src"),
+          use: [{
+             // load and use the wasm-loader dictionary
+             loader: require.resolve("wasm-loader"),
+             options: {}
+          }],
+        },
         // First, run the linter.
         // It's important to do this before Babel processes the JS.
         {
@@ -496,7 +506,7 @@ module.exports = function(webpackEnv) {
               // its runtime that would otherwise be processed through "file" loader.
               // Also exclude `html` and `json` extensions so they get processed
               // by webpacks internal loaders.
-              exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+              exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/,/\.wasm$/],
               options: {
                 name: 'static/media/[name].[hash:8].[ext]',
               },
@@ -534,9 +544,15 @@ module.exports = function(webpackEnv) {
             : undefined
         )
       ),
+      // From `wasm-bindgem`
+      new WasmPackPlugin({
+            crateDirectory: path.resolve(__dirname, ".")
+      }),
+      // Have this example work in Edge which doesn't ship `TextEncoder` or
+      // `TextDecoder` at this time.
       new webpack.ProvidePlugin({
           TextDecoder: ['text-encoding', 'TextDecoder'],
-          TextEncoder: ['text-encoding', 'TextEncoder'],
+          TextEncoder: ['text-encoding', 'TextEncoder']
       }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
