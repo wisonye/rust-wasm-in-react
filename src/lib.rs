@@ -8,7 +8,7 @@ extern "C" {
     fn log(content: &str);
 }
 
-/// For more 
+/// For more
 
 // --------------- Auto execute start point when WASM has been loaded -----------------------------
 /// For more details, plz have a look at

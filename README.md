@@ -12,6 +12,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 # We need this for hot-load
 cargo install cargo-watch
 
+# We need this to compile wasm code and run wasm test
+cargo install wasm-pack
+
 # Add cross-compilation target
 rustup target add wasm32-unknown-unknown
 ```
@@ -73,4 +76,32 @@ the page then you should be able to see the result:
 
     ![run-wasm-code.png](./readme_images/run-wasm-code.png)
 
-##
+</br>
+
+## How to test `WASM`
+
+- Add `wasm-bindgen-test` to `Cargo.toml` like below (if not exists yet):
+
+    ```rust
+    [dev-dependencies]
+    wasm-bindgen-test = "0.3.18"
+    ```
+
+- Create any test files under `tests` folder. For example:  **`tests/basic-test.rs`**
+
+    ```rs
+    use wasm_bindgen_test::*;
+
+    #[wasm_bindgen_test]
+    fn should_pass() {
+        assert_eq!(1, 1);
+    }
+    ```
+
+- Combine `cargo-watch` and `wasm-pack` for auto testing when rust source code saved:
+
+    ```bash
+    cargo watch --clear --shell 'wasm-pack test --node'
+    ```
+
+    ![wasm-bindgen-test.png](./readme_images/wasm-bindgen-test.png)
