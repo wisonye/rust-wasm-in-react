@@ -1,44 +1,76 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# `WASM` demo to show how to use `Rust` in `React`
 
-## Available Scripts
+## `Rust` installation
 
-In the project directory, you can run:
+```bash
+# Install latest rustup on Unix or Linux
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-### `npm start`
+# If you're on Windows, dowload `rustup-init.exe` executable and run it:
+# https://static.rust-lang.org/rustup/dist/i686-pc-windows-gnu/rustup-init.exe
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# We need this for hot-load
+cargo install cargo-watch
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+# Add cross-compilation target
+rustup target add wasm32-unknown-unknown
+```
 
-### `npm test`
+Test rust build by running:
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+cargo build --target wasm32-unknown-unknown
 
-### `npm run build`
+# You should see the output file: target/wasm32-unknown-unknown/debug/use_rust_in_react.wasm
+```
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## `React` installation
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Test the web app by running:
 
-### `npm run eject`
+`npm start`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Something you should know
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- We use the same root folder both for `React` project and `Rust` project. So we have to 
+make some changes for the default settings like below:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+    - For the `React` project, the `TypeScript` source folder is `ts-src` (not the default `src`
+    which created by `create-react-app`.
 
-## Learn More
+    - For the `Rust` project, the source folder is `src`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- We use `WasmPackPlugin` to run `cargo build` automatically, that means the command below will run automatic 
+when you run `npm start`, the `WASM` output will be placed into `pkg` folder:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+    ```bash
+    cargo build --target wasm32-unknown-unknown
+    ```
+
+    That's why you can see the building process below when you run `npm start` for the first time:
+
+    ![run-cargo-build-automatic.png](./readme_images/run-cargo-build-automatic.png)
+
+- For importing the generated `WASM` file in `React` project, we **map** the `wasm` package to the `pkg` 
+folder like below in `package.json`. That's why you can do `import 'wasm'` in any react component:
+    
+    ```js
+    "wasm": "file:./pkg"
+    ```
+
+    Actually, it will link the `pkg` folder into `node_modules/wasm`.
+
+- You have to re-run `npm start` after you changed `src/lib.rs` (or any module used by `src/lib.rs`), as
+**webpack DEV server** can't detect rust source change. 
+
+- Sometimes, after you run or re-run `npm start`, you can't see update in local browser. For that case, plz `refresh`
+the page then you should be able to see the result:
+
+    ![run-wasm-code.png](./readme_images/run-wasm-code.png)
+
+##
