@@ -1,6 +1,10 @@
 // extern crate wasm_bindgen;
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 // --------------- Let compile shows that all functions below are from js `console` ---------------
 #[wasm_bindgen]
 extern "C" {

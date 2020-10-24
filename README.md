@@ -105,3 +105,39 @@ the page then you should be able to see the result:
     ```
 
     ![wasm-bindgen-test.png](./readme_images/wasm-bindgen-test.png)
+
+</br>
+
+## How to build `./pkg` manually?
+
+Actually, `WasmPackPlugin` will run `wasm-pack` automatic to generate the `wasm` file and 
+all `JavaScript` glue code for you and then place all of them into `pkg` folder (all output 
+file names start with `index` prefix and NOT build in `release` mode). 
+
+But you still can generate the `pkg` content by manually to run `wasm-pack` like below.
+All output file names start with the package name in `Cargo.toml`:
+
+```bash
+# The default command `WasmPackPlugin` to run.
+wasm-pack build --target bundler
+
+# But you can build it in release mode, or use different target.
+wasm-pack build --target nodejs --release
+```
+
+</br>
+
+## What's under the hood?
+
+If you want to know how `wasm-bindgen` works, here is the good talk about all the technical details
+to explain how's is work:
+
+[`Rust, WebAssembly, and Javascript Make Three: An FFI Story`]( https://www.youtube.com/watch?v=nvLw_XKlZaU&t=989s)
+
+
+![how-bindgem-works-2.png](./readme_images/how-bindgem-works-2.png)
+
+![how-bindgen-works.png](./readme_images/how-bindgen-works.png)
+
+</br>
+
