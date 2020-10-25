@@ -19,13 +19,7 @@ cargo install wasm-pack
 rustup target add wasm32-unknown-unknown
 ```
 
-Test rust build by running:
-
-```bash
-cargo build --target wasm32-unknown-unknown
-
-# You should see the output file: target/wasm32-unknown-unknown/debug/use_rust_in_react.wasm
-```
+</br>
 
 ## `React` installation
 
@@ -48,14 +42,14 @@ make some changes for the default settings like below:
 
     - For the `Rust` project, the source folder is `src`.
 
-- We use `WasmPackPlugin` to run `cargo build` automatically, that means the command below will run automatic 
+- We use `WasmPackPlugin` to run `wasm-pack build` automatically, that means the command below will run automatic 
 when you run `npm start`, the `WASM` output will be placed into `pkg` folder:
 
     ```bash
-    cargo build --target wasm32-unknown-unknown
+    wasm-pack build --target bundler --release --out-name index
     ```
 
-    That's why you can see the building process below when you run `npm start` for the first time:
+    That's why you can see the building process below when you run `npm start` at first time:
 
     ![run-cargo-build-automatic.png](./readme_images/run-cargo-build-automatic.png)
 
@@ -68,8 +62,16 @@ folder like below in `package.json`. That's why you can do `import 'wasm'` in an
 
     Actually, it will link the `pkg` folder into `node_modules/wasm`.
 
-- You have to re-run `npm start` after you changed `src/lib.rs` (or any module used by `src/lib.rs`), as
-**webpack DEV server** can't detect rust source change. 
+- After you changed `src/lib.rs` (or any module used by `src/lib.rs`), as **webpack DEV server** can't detect rust 
+source change. Then you got 2 options to solve that:
+
+    - After running `npm start`, open another terminal tab to run `cargo watch` command below. It will detect any rust
+    source code change and trigger `wasm-pack build` to run, then the **webpack DEV server** will reload:
+        
+        ```bash
+        cargo watch --clear --shell 'wasm-pack build --target bundler --release --out-name index'
+        ```
+    - Or you can stop and re-run `npm start` again.
 
 - Sometimes, after you run or re-run `npm start`, you can't see update in local browser. For that case, plz `refresh`
 the page then you should be able to see the result:
@@ -112,18 +114,20 @@ the page then you should be able to see the result:
 
 Actually, `WasmPackPlugin` will run `wasm-pack` automatic to generate the `wasm` file and 
 all `JavaScript` glue code for you and then place all of them into `pkg` folder (all output 
-file names start with `index` prefix and NOT build in `release` mode). 
+file names start with `index` prefix). 
 
 But you still can generate the `pkg` content by manually to run `wasm-pack` like below.
 All output file names start with the package name in `Cargo.toml`:
 
 ```bash
 # The default command `WasmPackPlugin` to run.
-wasm-pack build --target bundler
+wasm-pack build --target bundler --release --out-name index
 
 # But you can build it in release mode, or use different target.
-wasm-pack build --target nodejs --release
+wasm-pack build --target nodejs --release --out-name index
 ```
+
+If you don't provide the `--out-name` option, it will use the package name from `Cargo.toml` by default.
 
 </br>
 
