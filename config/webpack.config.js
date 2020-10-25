@@ -546,7 +546,7 @@ module.exports = function (webpackEnv) {
             ),
             // From `wasm-bindgem`
             new WasmPackPlugin({
-                crateDirectory: path.resolve(__dirname, ".")
+                crateDirectory: path.resolve(__dirname, "."),
                 // Check https://rustwasm.github.io/wasm-pack/book/commands/build.html for
                 // the available set of arguments.
                 //
@@ -582,7 +582,7 @@ module.exports = function (webpackEnv) {
                 //
                 // the mode `development` makes `wasm-pack` build in `debug` mode.
                 // the mode `production` makes `wasm-pack` build in `release` mode.
-                // forceMode: "development",
+                forceMode: "production",
 
                 // Controls plugin output verbosity, either 'info' or 'error'.
                 // Defaults to 'info'.
