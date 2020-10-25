@@ -16,6 +16,12 @@ html, body {
     width: 100%;
 } 
 
+#render-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

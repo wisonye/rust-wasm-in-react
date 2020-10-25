@@ -35,3 +35,28 @@ pub fn test_log() {
 pub fn test_panic() {
     panic!("Panic from rust >>>>>>>>>>>>>>>>>.");
 }
+
+
+// --------------- WebGL relate stuff -------------------------------------------------------------
+#[wasm_bindgen]
+pub struct RustLogo {
+
+}
+
+#[wasm_bindgen]
+impl RustLogo {
+
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Self {
+        log("RustLog.new() called >>>>>>>>>>>>>>>>");
+
+        Self {}
+    }
+
+    pub fn update(&mut self, _time: f32, _height: f32, _width: f32) -> Result<(), JsValue> {
+        log("RustLog.update() called >>>>>>>>>>>>>>");
+        Ok(())
+    }
+
+    pub fn render(&self) {}
+}
